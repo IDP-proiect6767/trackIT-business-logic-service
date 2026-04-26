@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toolchains>
+  <toolchain>
+    <type>jdk</type>
+    <provides>
+      <version>21</version>
+      <vendor>bellsoft</vendor>
+    </provides>
+    <configuration>
+      <!-- macOS (Homebrew OpenJDK): -->
+      <jdkHome>/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home</jdkHome>
+      <!-- Linux CI (original path): /usr/lib/jvm/bellsoft-java21-amd64 -->
+    </configuration>
+  </toolchain>
+</toolchains>

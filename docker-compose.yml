@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  business-logic-service:
+    build: .
+    container_name: business-logic-service
+    ports:
+      - "8082:8082"
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:8081
+      DATA_SERVICE_URL: http://data-service:8083
+      AUTH_VALIDATE_CACHE_TTL: 60
+      TRACKIT_TZ: Europe/Bucharest
+    networks:
+      - frontend-net
+      - backend-net
+      - monitoring-net
+    depends_on:
+      - auth-service
+      - data-service
+    restart: unless-stopped
+
+  # ── External services (expected to be running) ─────────────────
+  auth-service:
+    image: florinionita/trackit-auth-service:latest
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    networks:
+      - frontend-net
+    # Auth Service's own env vars / DB config should be provided
+    # via an .env file or the infrastructure compose.
+
+  data-service:
+    image: florinionita/trackit-data-service:latest
+    container_name: data-service
+    ports:
+      - "8083:8083"
+    environment:
+      DATA_DB_URL: jdbc:postgresql://data-db:5432/data_db
+      DATA_DB_USER: data_user
+      DATA_DB_PASSWORD: data_pass
+    networks:
+      - backend-net
+    depends_on:
+      - data-db
+
+  data-db:
+    image: postgres:16-alpine
+    container_name: data-db
+    environment:
+      POSTGRES_DB: data_db
+      POSTGRES_USER: data_user
+      POSTGRES_PASSWORD: data_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - data-db-vol:/var/lib/postgresql/data
+    networks:
+      - backend-net
+
+networks:
+  frontend-net:
+    driver: bridge
+  backend-net:
+    driver: bridge
+  monitoring-net:
+    driver: bridge
+
+volumes:
+  data-db-vol:

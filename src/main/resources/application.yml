@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: business-logic-service
+
+server:
+  port: 8082
+
+trackit:
+  auth:
+    base-url: ${AUTH_SERVICE_URL:http://localhost:8081}
+    validate-cache-ttl-seconds: ${AUTH_VALIDATE_CACHE_TTL:60}
+    validate-cache-max-size: 10000
+  data:
+    base-url: ${DATA_SERVICE_URL:http://localhost:8083}
+  http:
+    connect-timeout-ms: 2000
+    response-timeout-ms: 5000
+  default-timezone: ${TRACKIT_TZ:Europe/Bucharest}
+
+resilience4j:
+  retry:
+    instances:
+      authService:
+        max-attempts: 3
+        wait-duration: 200ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+        retry-exceptions:
+          - java.io.IOException
+          - org.springframework.web.reactive.function.client.WebClientResponseException$ServiceUnavailable
+          - org.springframework.web.reactive.function.client.WebClientResponseException$GatewayTimeout
+          - com.trackit.business.exception.AuthServiceUnavailableException
+      dataService:
+        max-attempts: 3
+        wait-duration: 200ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+        retry-exceptions:
+          - java.io.IOException
+          - org.springframework.web.reactive.function.client.WebClientResponseException$ServiceUnavailable
+          - org.springframework.web.reactive.function.client.WebClientResponseException$GatewayTimeout
+          - com.trackit.business.exception.DataServiceUnavailableException
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
