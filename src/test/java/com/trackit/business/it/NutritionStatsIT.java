@@ -73,6 +73,13 @@ class NutritionStatsIT {
                         .withStatus(200)
                         .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                         .withBody("{\"valid\":true,\"userId\":1,\"username\":\"mihai\",\"role\":\"USER\",\"expiresAt\":" + FUTURE_EXPIRY + "}")));
+
+        dataMock.stubFor(com.github.tomakehurst.wiremock.client.WireMock.get(urlEqualTo("/api/v1/goals"))
+                .withHeader("X-User-Id", equalTo("1"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                        .withBody("{\"userId\":1,\"dailyCaloriesKcal\":2000,\"dailyProteinG\":150,\"dailyCarbsG\":250,\"dailyFatG\":65,\"updatedAt\":\"1970-01-01T00:00:00Z\"}")));
     }
 
     @Test

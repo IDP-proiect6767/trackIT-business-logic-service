@@ -49,6 +49,9 @@ class DashboardIT {
                 .willReturn(aResponse().withStatus(200).withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE).withBody(empty)));
         dataMock.stubFor(WireMock.get(urlPathEqualTo("/api/v1/workout-logs"))
                 .willReturn(aResponse().withStatus(200).withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE).withBody(empty)));
+        dataMock.stubFor(WireMock.get(urlPathEqualTo("/api/v1/goals"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                        .withBody("{\"userId\":1,\"dailyCaloriesKcal\":2000,\"dailyProteinG\":150,\"dailyCarbsG\":250,\"dailyFatG\":65,\"updatedAt\":\"1970-01-01T00:00:00Z\"}")));
     }
 
     @Test @DisplayName("dashboard returns aggregated structure")
