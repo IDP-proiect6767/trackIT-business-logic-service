@@ -1,44 +1,29 @@
 package com.trackit.business.service;
 
+import com.trackit.business.client.DataServiceClient;
 import com.trackit.business.dto.goals.GoalsResponse;
 import com.trackit.business.dto.goals.UpdateGoalsRequest;
 import com.trackit.business.observability.BusinessMetrics;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.concurrent.ConcurrentHashMap;
-
 @Service
 public class GoalsService {
 
-    static final GoalsResponse DEFAULT_GOALS = new GoalsResponse(
-            new BigDecimal("2000"),
-            new BigDecimal("150"),
-            new BigDecimal("250"),
-            new BigDecimal("65"),
-            Instant.EPOCH);
-
-    private final ConcurrentHashMap<Long, GoalsResponse> goals = new ConcurrentHashMap<>();
+    private final DataServiceClient dataClient;
     private final BusinessMetrics metrics;
 
-    public GoalsService(BusinessMetrics metrics) {
+    public GoalsService(DataServiceClient dataClient, BusinessMetrics metrics) {
+        this.dataClient = dataClient;
         this.metrics = metrics;
     }
 
     public GoalsResponse getGoals(Long userId) {
-        return goals.getOrDefault(userId, DEFAULT_GOALS);
+        return dataClient.getGoals(userId);
     }
 
     public GoalsResponse updateGoals(Long userId, UpdateGoalsRequest req) {
-        GoalsResponse next = new GoalsResponse(
-                req.dailyCaloriesKcal(),
-                req.dailyProteinG(),
-                req.dailyCarbsG(),
-                req.dailyFatG(),
-                Instant.now());
-        goals.put(userId, next);
+        GoalsResponse result = dataClient.updateGoals(userId, req);
         metrics.recordGoalsUpdated();
-        return next;
+        return result;
     }
 }

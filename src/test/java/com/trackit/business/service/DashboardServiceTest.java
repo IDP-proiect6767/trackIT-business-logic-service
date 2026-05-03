@@ -44,7 +44,7 @@ class DashboardServiceTest {
         DailyNutritionStats todayStats = new DailyNutritionStats(
                 today, new BigDecimal("1500"), new BigDecimal("100"),
                 new BigDecimal("180"), new BigDecimal("50"),
-                new GoalsResponse(new BigDecimal("2000"), new BigDecimal("150"),
+                new GoalsResponse(1L, new BigDecimal("2000"), new BigDecimal("150"),
                         new BigDecimal("250"), new BigDecimal("65"), Instant.EPOCH),
                 new MacroDelta(new BigDecimal("-500"), new BigDecimal("-50"),
                         new BigDecimal("-70"), new BigDecimal("-15")),

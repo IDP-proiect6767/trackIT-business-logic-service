@@ -7,10 +7,11 @@ services:
     ports:
       - "8082:8082"
     environment:
-      AUTH_SERVICE_URL: http://auth-service:8081
-      DATA_SERVICE_URL: http://data-service:8083
-      AUTH_VALIDATE_CACHE_TTL: 60
-      TRACKIT_TZ: Europe/Bucharest
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth-service:8081}
+      DATA_SERVICE_URL: ${DATA_SERVICE_URL:-http://data-service:8083}
+      AUTH_VALIDATE_CACHE_TTL: ${AUTH_VALIDATE_CACHE_TTL:-60}
+      TRACKIT_TZ: ${TRACKIT_TZ:-Europe/Bucharest}
+      SPRING_PROFILES_ACTIVE: docker
     networks:
       - frontend-net
       - backend-net
@@ -38,8 +39,9 @@ services:
       - "8083:8083"
     environment:
       DATA_DB_URL: jdbc:postgresql://data-db:5432/data_db
-      DATA_DB_USER: data_user
-      DATA_DB_PASSWORD: data_pass
+      DATA_DB_USER: ${DATA_DB_USER:-data_user}
+      DATA_DB_PASSWORD: ${DATA_DB_PASSWORD}
+      SPRING_PROFILES_ACTIVE: docker
     networks:
       - backend-net
     depends_on:
@@ -50,8 +52,8 @@ services:
     container_name: data-db
     environment:
       POSTGRES_DB: data_db
-      POSTGRES_USER: data_user
-      POSTGRES_PASSWORD: data_pass
+      POSTGRES_USER: ${DATA_DB_USER:-data_user}
+      POSTGRES_PASSWORD: ${DATA_DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:

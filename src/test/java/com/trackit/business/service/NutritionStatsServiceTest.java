@@ -34,6 +34,7 @@ class NutritionStatsServiceTest {
             new NutritionStatsService(data, goalsService, metrics);
 
     private static final GoalsResponse GOALS = new GoalsResponse(
+            1L,
             new BigDecimal("2000"),
             new BigDecimal("150"),
             new BigDecimal("250"),

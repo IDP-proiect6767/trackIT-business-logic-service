@@ -7,6 +7,8 @@ import com.trackit.business.dto.exercise.UpdateExerciseRequest;
 import com.trackit.business.dto.food.CreateFoodRequest;
 import com.trackit.business.dto.food.FoodResponse;
 import com.trackit.business.dto.food.UpdateFoodRequest;
+import com.trackit.business.dto.goals.GoalsResponse;
+import com.trackit.business.dto.goals.UpdateGoalsRequest;
 import com.trackit.business.dto.meal.CreateMealRequest;
 import com.trackit.business.dto.meal.MealResponse;
 import com.trackit.business.dto.meal.UpdateMealRequest;
@@ -355,6 +357,31 @@ public class DataServiceClient {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::translate)
                 .toBodilessEntity()
+                .block());
+    }
+
+    // ---------------- Goals ----------------
+
+    @Retry(name = "dataService")
+    public GoalsResponse getGoals(Long userId) {
+        return timed("goals", "GET", () -> webClient.get()
+                .uri("/api/v1/goals")
+                .header(X_USER_ID, String.valueOf(userId))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, this::translate)
+                .bodyToMono(GoalsResponse.class)
+                .block());
+    }
+
+    @Retry(name = "dataService")
+    public GoalsResponse updateGoals(Long userId, UpdateGoalsRequest req) {
+        return timed("goals", "PUT", () -> webClient.put()
+                .uri("/api/v1/goals")
+                .header(X_USER_ID, String.valueOf(userId))
+                .bodyValue(req)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, this::translate)
+                .bodyToMono(GoalsResponse.class)
                 .block());
     }
 
